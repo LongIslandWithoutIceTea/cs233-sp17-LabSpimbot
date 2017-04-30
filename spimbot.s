@@ -225,7 +225,7 @@ z_loop1:
 	sw	$t0	CATCH_BUNNY
         #lw      $t0     NUM_CARROTS
         lw      $t0     NUM_BUNNIES_CARRIED
-        bge     $t0     5       x_loop2
+        bge     $t0     2       x_loop2
 	j	start
 
 do_x1:
@@ -315,13 +315,15 @@ z_loop2:
 	li	$t0	1
 	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
 	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
 	sw	$t0	LOCK_PLAYPEN
 	li	$t0	30
 	sw	$t0  	VELOCITY
-	j	main
+        lw $t0, OTHER_BOT_X
+        beq     $t0     -1      main
+	j	go_unlock
 
 do_x4:
 	li	$t3 	180			##180 toward the bunny
@@ -364,6 +366,96 @@ do_x6:
 	j	x_loop2
 do_y6:
 	j 	y_loop2
+
+go_unlock:
+        j       x_loop3
+x_loop3:
+	lw	$t2	PLAYPEN_OTHER_LOCATION($zero)
+	srl	$t4	$t2	16
+	lw	$t5	BOT_X
+	blt	$t4 	$t5 	do_x7
+	bgt	$t4 	$t5	do_x8
+	beq	$t4	$t5	do_z7
+
+y_loop3:
+##	la	$t0	bunnies_data
+##	sw	$t0	SEARCH_BUNNIES
+##	addi	$t2	$t0	4
+##	mul	$t3	$t8	16
+##	add	$t2	$t2	$t3
+	lw	$t2	PLAYPEN_OTHER_LOCATION($zero)
+
+	sll	$t4	$t2	16
+	srl	$t4	$t4	16
+	lw	$t5	BOT_Y
+	blt	$t4 	$t5 	do_y7
+	bgt	$t4	$t5 	do_y8
+	beq	$t4 	$t5 	do_z7
+
+z_loop3:
+##	la	$t0	bunnies_data
+##	sw	$t0	SEARCH_BUNNIES
+##	addi	$t2	$t0	4
+##	mul	$t3	$t8	16
+##	add	$t2	$t2	$t3
+	lw	$t2	PLAYPEN_OTHER_LOCATION($zero)
+	srl	$t4	$t2	16
+	lw	$t5	BOT_X
+	sll	$t6	$t2	16
+	srl	$t6	$t6	16
+	lw	$t7 	BOT_Y
+	bne	$t4	$t5, 	do_x9
+	bne	$t6	$t7, 	do_y9
+	li	$t0	0
+	sw	$t0  	VELOCITY
+	li	$t0	1
+	sw	$t0	UNLOCK_PLAYPEN
+	li	$t0	30
+	sw	$t0  	VELOCITY
+	j	main
+
+do_x7:
+	li	$t3 	180			##180 toward the bunny
+	sw	$t3 	0xffff0014($zero)
+	li	$t3	1
+	sw	$t3 	0xffff0018
+	li	$t3	30
+	sw	$t3  	VELOCITY
+	j     	x_loop3
+do_x8:
+	li	$t3 	0			##0 toward the bunny
+	sw	$t3 	0xffff0014($zero)
+	li	$t3 	1
+	sw	$t3	0xffff0018
+	li	$t3	30
+	sw	$t3 	VELOCITY
+	j	x_loop3
+
+do_z7:
+	j	z_loop3
+do_y7:
+
+	li	$t3 	270			##270 toward the bunny
+	sw	$t3 	0xffff0014($zero)
+	li	$t3	1
+	sw	$t3 	0xffff0018
+	li	$t3	30
+	sw	$t3 	VELOCITY
+	j     	z_loop3
+do_y8:
+
+	li	$t3 	90			##90 toward the bunny
+	sw	$t3 	0xffff0014($zero)
+	li	$t3	1
+	sw	$t3 	0xffff0018
+	li	$t3	30
+	sw	$t3 	VELOCITY
+	j     	z_loop3
+do_x9:
+	j	x_loop3
+do_y9:
+	j 	y_loop3
+
 
 puzzle_init:
 	# initialize values for search carrot
