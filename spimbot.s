@@ -43,7 +43,7 @@ TIMER_ACK               = 0xffff006c
 BUNNY_MOVE_INT_MASK     = 0x400
 BUNNY_MOVE_ACK          = 0xffff0020
 PLAYPEN_UNLOCK_INT_MASK = 0x2000
-PLAYPEN_UNLOCK_ACK      = 0xffff005c
+PLAYPEN_UNLOCK_ACK      = 0xffff0028
 EX_CARRY_LIMIT_INT_MASK = 0x4000
 EX_CARRY_LIMIT_ACK      = 0xffff002c
 REQUEST_PUZZLE_INT_MASK = 0x800
@@ -128,13 +128,13 @@ no_request:
 #         lw      $t6     0($t3)  #t6 = X
 #         lw      $t7     4($t3)  #t7 = Y
 #         lw      $t4     8($t3)
-# 	lw	$t3	PLAYPEN_LOCATION($zero)
-#         srl	$t3	$t3	16
+# 	  lw	  $t3	  PLAYPEN_LOCATION($zero)
+#         srl	  $t3	  $t3	  16
 #         sub     $t6     $t6     $t3
 #         mul     $t6     $t6     $t6     #x^2
-# 	lw	$t3	PLAYPEN_LOCATION($zero)
-# 	sll	$t3	$t3	16
-# 	srl	$t3	$t3	16
+# 	  lw	  $t3	  PLAYPEN_LOCATION($zero)
+# 	  sll	  $t3	  $t3	  16
+# 	  srl	  $t3	  $t3	  16
 #         sub     $t7     $t7     $t3
 #         mul     $t7     $t7     $t7     #y^2
 #         add     $t3     $t6     $t7     #t3 = x^2 + y^2
@@ -223,9 +223,13 @@ z_loop1:
 	bne	$t4	$t5, 	do_x3
 	bne	$t6	$t7, 	do_y3
 	sw	$t0	CATCH_BUNNY
-        #lw      $t0     NUM_CARROTS
-        lw      $t0     NUM_BUNNIES_CARRIED
-        bge     $t0     2       x_loop2
+        lw      $t0     NUM_BUNNIES_CARRIED($zero)
+        bge     $t0     5       x_loop2
+        lw      $t0     NUM_CARROTS
+
+        bge     $t0     2       x_loop1
+        #lw      $t0     NUM_BUNNIES_CARRIED($zero)
+        #bge     $t0     5       x_loop2
 	j	start
 
 do_x1:
@@ -315,9 +319,9 @@ z_loop2:
 	li	$t0	1
 	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
 	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
-	#sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
+	sw	$t0	PUT_BUNNIES_IN_PLAYPEN
 	sw	$t0	LOCK_PLAYPEN
 	li	$t0	30
 	sw	$t0  	VELOCITY
