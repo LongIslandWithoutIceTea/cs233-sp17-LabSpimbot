@@ -1,0 +1,17 @@
+#
+# Teamname ForgiveHer
+# Edited by sh8 and revised by chuangk2 in sp2017
+#
+# Catching Strategy:
+#   We decide to catch 5 bunnies (randomly since we just can't figure out how to
+#   get to the nearest one, but never mind) at a time before putting all of them
+#   back to the Playpen. Meanwhile, the puzzle-solving procedure will be
+#   executed whenever our number of carrots is less than 5 (and hope that the
+#   bunny’s weight won't exceed the limit). The robot chooses the bunny at the
+#   first index of the bunnies_info as its target (somewhat randomly since we
+#   just can't figure out how to get to the nearest one, but never mind, it can
+#   run).
+# Unlocking competitor’s playpen:
+#   Every time after the robot returns to our playpen and drops the bunnies, it
+#   will go to the opponent's playpen and unlock it before starting the next
+#   round of bunny-chasing.
